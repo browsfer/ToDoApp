@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class ToDoTile extends StatelessWidget {
   final String taskName;
   final bool taskCompleted;
   Function(bool?)? onChanged;
 
   ToDoTile({
+    super.key,
     required this.taskName,
     required this.taskCompleted,
     this.onChanged,
@@ -25,7 +27,6 @@ class ToDoTile extends StatelessWidget {
           children: [
             //checkbox
             Checkbox(value: taskCompleted, onChanged: onChanged),
-
             //task name
             Text(
               taskName,
