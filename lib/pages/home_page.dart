@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/components/alert_box.dart';
 import 'package:todo_app/components/todo_tile.dart';
 
 // ignore: must_be_immutable
@@ -13,7 +14,7 @@ class _HomePageState extends State<HomePage> {
   //List of ToDo tasks
   List toDoList = [
     ['Excersise', true],
-    ['Excersise', true],
+    ['Learn flutter', true],
     ['Sex', false],
   ];
 
@@ -25,12 +26,24 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  //Add a new task
+  void addNewTask() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertBox(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('To Do'),
         centerTitle: true,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: addNewTask,
+        child: Icon(Icons.add),
       ),
       body: ListView.builder(
         itemCount: toDoList.length,
