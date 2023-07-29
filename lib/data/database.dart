@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 class ToDoDatabase {
   List toDoList = [];
 
-  final _myBox = Hive.box('myList');
+  final _myBox = Hive.box('TODOLIST');
 
   //On first time ever opening app
   void createInitialData() {

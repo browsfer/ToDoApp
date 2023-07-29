@@ -6,7 +6,7 @@ void main() async {
   //Initializing Hive
   await Hive.initFlutter();
 
-  var box = await Hive.openBox('myList');
+  await Hive.openBox('TODOLIST');
 
   runApp(const MyApp());
 }
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
