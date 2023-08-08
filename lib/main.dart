@@ -7,6 +7,7 @@ void main() async {
   await Hive.initFlutter();
 
   await Hive.openBox('TODOLIST');
+  await Hive.openBox('working_hours');
 
   runApp(const MyApp());
 }

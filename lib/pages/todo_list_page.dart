@@ -63,7 +63,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
       _db.createInitialData();
     } else {
       //If we already have something on the list
-      _db.loadDatabase();
+      _db.loadToDoList();
     }
 
     super.initState();
@@ -73,9 +73,19 @@ class _ToDoListPageState extends State<ToDoListPage> {
   Widget build(BuildContext context) {
     return _db.toDoList.isEmpty
         ? Center(
-            child: Text(
-              'Add your first task',
-              style: Theme.of(context).primaryTextTheme.headlineSmall,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Add your first task',
+                  style: Theme.of(context).primaryTextTheme.headlineSmall,
+                ),
+                const SizedBox(height: 5),
+                FloatingActionButton(
+                  onPressed: addNewTask,
+                  child: const Icon(Icons.add),
+                ),
+              ],
             ),
           )
         : Stack(alignment: Alignment.bottomRight, children: [
@@ -89,7 +99,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: FloatingActionButton(
                 onPressed: addNewTask,
                 child: const Icon(Icons.add),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:time_range_picker/time_range_picker.dart';
+import 'package:todo_app/components/hours_tile.dart';
+import 'package:todo_app/data/database.dart';
 
 class TimeSheetsPage extends StatefulWidget {
-  const TimeSheetsPage({super.key});
+  const TimeSheetsPage({Key? key}) : super(key: key);
 
   @override
   State<TimeSheetsPage> createState() => _TimeSheetsPageState();
@@ -12,26 +15,24 @@ class TimeSheetsPage extends StatefulWidget {
 class _TimeSheetsPageState extends State<TimeSheetsPage> {
   TimeOfDay? startTime;
   TimeOfDay? endTime;
-  String workHours = '0.0';
+  String? workHours;
 
-  //List of week days
-  Map<String, String> workHoursMap = {
-    'Monday': '0.0',
-    'Tuesday': '0.0',
-    'Wednesday': '0.0',
-    'Thursday': '0.0',
-    'Friday': '0.0',
-    'Saturday': '0.0',
-    'Sunday': '0.0',
-  };
+  // Database reference
+  final ToDoDatabase _db = ToDoDatabase();
 
-  List<TimeRange> selectedTimeRanges = List.filled(
-    7,
-    TimeRange(
-      startTime: const TimeOfDay(hour: 0, minute: 0),
-      endTime: const TimeOfDay(hour: 0, minute: 0),
-    ),
-  );
+  //Hive box for working hours
+  final _workingHoursBox = Hive.box('working_hours');
+
+  @override
+  void initState() {
+    //Checking if values are null
+    if (_workingHoursBox.get('working_hours') == null) {
+      return;
+    }
+    _db.loadHoursList();
+
+    super.initState();
+  }
 
   void _selectTimeRange(BuildContext context, int dayIndex) async {
     TimeRange? result = await showTimeRangePicker(
@@ -71,11 +72,11 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
 
     if (result != null) {
       setState(() {
-        selectedTimeRanges[dayIndex] = result;
         startTime = result.startTime;
         endTime = result.endTime;
         workHours = _calculateWorkHours(result);
-        workHoursMap[getDayOfWeek(dayIndex)] = _calculateWorkHours(result);
+        _db.workHoursMap[getDayOfWeek(dayIndex)] = _calculateWorkHours(result);
+        _db.updateDatabase();
       });
     }
   }
@@ -100,7 +101,7 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
 
   String _calculateTotalWorkHours() {
     double totalHours = 0.0;
-    workHoursMap.forEach((day, hours) {
+    _db.workHoursMap.forEach((day, hours) {
       totalHours += double.parse(hours);
     });
     return totalHours.toStringAsFixed(2);
@@ -115,9 +116,10 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             for (int i = 0; i < 7; i++)
-              ElevatedButton(
-                onPressed: () => _selectTimeRange(context, i),
-                child: Text(getDayOfWeek(i)),
+              HoursTile(
+                hoursPerDay: _db.workHoursMap[getDayOfWeek(i)] ?? '0.0',
+                weekDay: getDayOfWeek(i),
+                selectWorkTime: () => _selectTimeRange(context, i),
               ),
             const SizedBox(height: 16),
             Text(
