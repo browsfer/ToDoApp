@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-class ToDoDatabase {
+class MyDatabase {
   //List of To Do thingss
   List toDoList = [];
 
@@ -26,9 +26,13 @@ class ToDoDatabase {
     workHoursMap = _workingHoursBox.get('working_hours');
   }
 
-  //Update data
-  void updateDatabase() {
-    _workingHoursBox.put('working_hours', workHoursMap);
+  //Update To Do list
+  void updateToDoList() {
     _myBox.put("TODOLIST", toDoList);
+  }
+
+  //Update hours list
+  void updateHoursList() {
+    _workingHoursBox.put('working_hours', workHoursMap);
   }
 }

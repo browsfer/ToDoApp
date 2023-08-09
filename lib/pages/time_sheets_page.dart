@@ -16,9 +16,10 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
   TimeOfDay? startTime;
   TimeOfDay? endTime;
   String? workHours;
+  DateTime _today = DateTime.now();
 
   // Database reference
-  final ToDoDatabase _db = ToDoDatabase();
+  final MyDatabase _db = MyDatabase();
 
   //Hive box for working hours
   final _workingHoursBox = Hive.box('working_hours');
@@ -34,6 +35,7 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
     super.initState();
   }
 
+  //Pick working time
   void _selectTimeRange(BuildContext context, int dayIndex) async {
     TimeRange? result = await showTimeRangePicker(
       context: context,
@@ -76,11 +78,12 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
         endTime = result.endTime;
         workHours = _calculateWorkHours(result);
         _db.workHoursMap[getDayOfWeek(dayIndex)] = _calculateWorkHours(result);
-        _db.updateDatabase();
+        _db.updateHoursList();
       });
     }
   }
 
+  //Get day of the week
   String getDayOfWeek(int dayIndex) {
     final now = DateTime.now();
     final firstDayOfWeek = now.subtract(Duration(days: now.weekday - 1));
@@ -88,6 +91,7 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
     return DateFormat('EEEE').format(dayOfWeek);
   }
 
+  //Calculate work hours for each day
   String _calculateWorkHours(TimeRange? result) {
     if (result != null) {
       final startHour = startTime!.hour + startTime!.minute / 60;
@@ -99,12 +103,32 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
     }
   }
 
+  // Calculate work hours for whole week
   String _calculateTotalWorkHours() {
     double totalHours = 0.0;
     _db.workHoursMap.forEach((day, hours) {
       totalHours += double.parse(hours);
     });
     return totalHours.toStringAsFixed(2);
+  }
+
+  //Export working hours to excel
+  void _exportWorkHoursToExcel() async {
+    return;
+  }
+
+  /// Find the first date of the week which contains the provided date.
+  String findFirstDateOfTheWeek(DateTime dateTime) {
+    var finalDate = dateTime.subtract(Duration(days: dateTime.weekday - 1));
+    return DateFormat('dd.MM').format(finalDate);
+  }
+
+  /// Find last date of the week which contains provided date.
+  String findLastDateOfTheWeek(DateTime dateTime) {
+    var finalDate =
+        dateTime.add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
+
+    return DateFormat('dd.MM').format(finalDate);
   }
 
   @override
@@ -115,6 +139,9 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+                'Current week: ${findFirstDateOfTheWeek(_today)} - ${findLastDateOfTheWeek(_today)}',
+                style: Theme.of(context).textTheme.titleMedium),
             for (int i = 0; i < 7; i++)
               HoursTile(
                 hoursPerDay: _db.workHoursMap[getDayOfWeek(i)] ?? '0.0',
@@ -126,6 +153,15 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
               'Total Work Hours: ${_calculateTotalWorkHours()}',
               style: const TextStyle(fontSize: 20),
             ),
+
+            //Export working hours for current week
+            FloatingActionButton(
+              mini: true,
+              onPressed: () {
+                _exportWorkHoursToExcel();
+              },
+              child: const Icon(Icons.file_download),
+            )
           ],
         ),
       ),

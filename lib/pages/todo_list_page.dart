@@ -14,47 +14,10 @@ class ToDoListPage extends StatefulWidget {
 
 class _ToDoListPageState extends State<ToDoListPage> {
   final _controller = TextEditingController();
-  final ToDoDatabase _db = ToDoDatabase();
+  final MyDatabase _db = MyDatabase();
 
   //Hive box reference
   final _myBox = Hive.box('TODOLIST');
-
-  //Changing checkbox
-  void checkBoxClicked(int index, bool? isChanged) {
-    setState(() {
-      _db.toDoList[index][1] = !_db.toDoList[index][1];
-    });
-    _db.updateDatabase();
-  }
-
-  //Delete task
-  void deleteTask(int index) {
-    setState(() {
-      _db.toDoList.removeAt(index);
-    });
-    _db.updateDatabase();
-  }
-
-  //Save new task
-  void saveNewTask() {
-    setState(() {
-      _db.toDoList.insert(0, [_controller.text, false]);
-      _controller.clear();
-    });
-    Navigator.of(context).pop();
-    _db.updateDatabase();
-  }
-
-  //Add a new task
-  void addNewTask() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertBox(
-        controller: _controller,
-        saveNewTask: saveNewTask,
-      ),
-    );
-  }
 
   @override
   void initState() {
@@ -67,6 +30,53 @@ class _ToDoListPageState extends State<ToDoListPage> {
     }
 
     super.initState();
+  }
+
+  //Changing checkbox
+  void checkBoxClicked(int index, bool? isChanged) {
+    setState(() {
+      _db.toDoList[index][1] = !_db.toDoList[index][1];
+    });
+    _db.updateToDoList();
+  }
+
+  //Delete task
+  void deleteTask(int index) {
+    setState(() {
+      _db.toDoList.removeAt(index);
+    });
+    _db.updateToDoList();
+  }
+
+  //Save new task
+  void saveNewTask() {
+    setState(() {
+      _db.toDoList.insert(0, [_controller.text, false]);
+      _controller.clear();
+    });
+    Navigator.of(context).pop();
+    _db.updateToDoList();
+  }
+
+  //Add a new task
+  void addNewTask() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertBox(
+        controller: _controller,
+        saveNewTask: () {
+          if (_controller.text.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('You have to put some text first!'),
+              ),
+            );
+          } else {
+            return saveNewTask();
+          }
+        },
+      ),
+    );
   }
 
   @override
