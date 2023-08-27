@@ -5,7 +5,7 @@ class MyDatabase {
   List toDoList = [];
 
   //List of week days
-  Map<String, String> workHoursMap = {};
+  Map<dynamic, dynamic> workHoursMap = {};
 
   final _myBox = Hive.box('TODOLIST');
   final _workingHoursBox = Hive.box('working_hours');

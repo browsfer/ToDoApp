@@ -112,15 +112,10 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
     return totalHours.toStringAsFixed(2);
   }
 
-  //Export working hours to excel
-  void _exportWorkHoursToExcel() async {
-    return;
-  }
-
   /// Find the first date of the week which contains the provided date.
   String findFirstDateOfTheWeek(DateTime dateTime) {
     var finalDate = dateTime.subtract(Duration(days: dateTime.weekday - 1));
-    return DateFormat('dd.MM').format(finalDate);
+    return DateFormat('dd').format(finalDate);
   }
 
   /// Find last date of the week which contains provided date.
@@ -128,7 +123,12 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
     var finalDate =
         dateTime.add(Duration(days: DateTime.daysPerWeek - dateTime.weekday));
 
-    return DateFormat('dd.MM').format(finalDate);
+    return DateFormat('d MMM y').format(finalDate);
+  }
+
+  //Export working hours to excel
+  void _exportWorkHoursToExcel() async {
+    return;
   }
 
   @override
@@ -141,7 +141,7 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
           children: [
             Text(
                 'Current week: ${findFirstDateOfTheWeek(_today)} - ${findLastDateOfTheWeek(_today)}',
-                style: Theme.of(context).textTheme.titleMedium),
+                style: Theme.of(context).textTheme.headlineSmall),
             for (int i = 0; i < 7; i++)
               HoursTile(
                 hoursPerDay: _db.workHoursMap[getDayOfWeek(i)] ?? '0.0',

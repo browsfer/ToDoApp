@@ -36,12 +36,15 @@ class _HoursTileState extends State<HoursTile> {
             children: [
               Text(
                 widget.weekDay,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: const TextStyle(fontSize: 20),
               ),
               const SizedBox(width: 4),
               Text(
                 '${widget.hoursPerDay}h',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: const TextStyle(
+                  color: Colors.white60,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
