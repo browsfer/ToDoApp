@@ -126,11 +126,6 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
     return DateFormat('d MMM y').format(finalDate);
   }
 
-  //Export working hours to excel
-  void _exportWorkHoursToExcel() async {
-    return;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -154,14 +149,14 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
               style: const TextStyle(fontSize: 20),
             ),
 
-            //Export working hours for current week
-            FloatingActionButton(
-              mini: true,
-              onPressed: () {
-                _exportWorkHoursToExcel();
-              },
-              child: const Icon(Icons.file_download),
-            )
+            // //Export working hours for current week
+            // FloatingActionButton(
+            //   mini: true,
+            //   onPressed: () {
+            //     _exportWorkHoursToExcel();
+            //   },
+            //   child: const Icon(Icons.file_download),
+            // )
           ],
         ),
       ),
