@@ -44,8 +44,8 @@ class _TimeSheetsPageState extends State<TimeSheetsPage> {
       strokeWidth: 12,
       handlerRadius: 14,
       interval: const Duration(minutes: 30),
-      backgroundWidget: Image.asset(
-        'assets/time_image.png',
+      backgroundWidget: Image.network(
+        'https://cdn.pixabay.com/photo/2014/03/25/16/31/nightsky-297261_1280.png',
         width: 200,
         height: 200,
       ),
